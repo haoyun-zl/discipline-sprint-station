@@ -1,0 +1,3649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自律冲刺站</title>
+    <meta
+      name="description"
+      content="一个公开可部署的自律打卡与角色养成网页，支持周奖励、累计升级、移动端打卡与 PWA 安装。"
+    />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="自律冲刺站" />
+    <meta
+      property="og:description"
+      content="把运动、求职、睡眠和情绪打卡做成有角色成长感的公开网页工具。"
+    />
+    <meta property="og:image" content="./icon-512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#6b8cff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="自律冲刺站" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="自律冲刺站" />
+        <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+        <style>
+:root {
+  --bg: #fff8f2;
+  --panel: rgba(255, 255, 255, 0.84);
+  --text: #2f2b45;
+  --muted: #6f6a89;
+  --blue: #73b8ff;
+  --blue-deep: #5d79ff;
+  --pink: #ff7cbc;
+  --pink-deep: #ff5d8f;
+  --yellow: #ffd56a;
+  --yellow-deep: #ffbf30;
+  --green: #60d394;
+  --mint: #62d4c6;
+  --purple: #8b7cff;
+  --border: rgba(99, 88, 145, 0.14);
+  --shadow: 0 24px 54px rgba(120, 90, 170, 0.12);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 214, 107, 0.32), transparent 28%),
+    radial-gradient(circle at top right, rgba(115, 184, 255, 0.22), transparent 32%),
+    linear-gradient(180deg, #fffdf8 0%, var(--bg) 50%, #fff7fb 100%);
+  color: var(--text);
+  font-family:
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+    Arial, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.app-shell {
+  width: min(1260px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 40px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.78), transparent 24%),
+    linear-gradient(135deg, rgba(115, 184, 255, 0.92), rgba(255, 124, 188, 0.88));
+  box-shadow: var(--shadow);
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hero::before {
+  inset: auto auto -52px -42px;
+  width: 180px;
+  height: 180px;
+}
+
+.hero::after {
+  inset: auto -44px -60px auto;
+  width: 220px;
+  height: 220px;
+}
+
+.hero__badge,
+.panel__label,
+.pill span,
+.reward-card__tag,
+.week-day__note,
+.history-token {
+  letter-spacing: 0.02em;
+}
+
+.hero__badge {
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+  gap: 22px;
+  align-items: center;
+}
+
+.eyebrow,
+.hero__text,
+.panel__label {
+  margin: 0;
+}
+
+.eyebrow {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+}
+
+.hero h1 {
+  margin: 10px 0 12px;
+  font-size: clamp(36px, 6vw, 62px);
+  line-height: 1.02;
+  color: #fff;
+}
+
+.hero__text {
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.hero__link {
+  text-decoration: none;
+}
+
+.hero__public-note {
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.hero__stats {
+  display: grid;
+  gap: 14px;
+}
+
+.hero-stat {
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hero-stat span,
+.hero-stat p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-stat span {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hero-stat strong {
+  display: block;
+  margin-top: 8px;
+  color: #fff;
+  font-size: 30px;
+}
+
+.hero-stat p {
+  margin: 8px 0 0;
+  line-height: 1.6;
+}
+
+.install-banner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 22px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(8px);
+}
+
+.install-banner__label {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+  text-transform: uppercase;
+}
+
+.install-banner strong {
+  display: block;
+  color: #fff;
+  font-size: 20px;
+}
+
+.install-banner__text {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.6;
+}
+
+.install-banner__actions,
+.panel-actions,
+.history-actions,
+.job-input__field,
+.editor-footer,
+.progress-row,
+.history-item,
+.reward-board,
+.panel__head {
+  display: flex;
+  align-items: center;
+}
+
+.install-banner__actions,
+.panel-actions,
+.history-actions,
+.job-input__field {
+  gap: 10px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 22px;
+}
+
+section[id] {
+  scroll-margin-top: 92px;
+}
+
+.quick-nav {
+  position: sticky;
+  top: 10px;
+  z-index: 12;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  padding: 12px;
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 16px 28px rgba(120, 90, 170, 0.08);
+}
+
+.quick-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(115, 184, 255, 0.12);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.quick-nav a:hover {
+  background: rgba(115, 184, 255, 0.2);
+}
+
+.panel {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.82)),
+    var(--panel);
+  backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    var(--shadow);
+}
+
+.panel--gradient {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.84)),
+    linear-gradient(135deg, rgba(115, 184, 255, 0.16), rgba(255, 124, 188, 0.14));
+}
+
+.growth-panel {
+  grid-column: span 8;
+}
+
+.weekly-panel {
+  grid-column: span 4;
+}
+
+.quote-panel,
+.focus-panel,
+.checkin-panel {
+  grid-column: span 6;
+}
+
+.week-panel,
+.milestone-panel,
+.history-panel {
+  grid-column: span 12;
+}
+
+.panel__head,
+.editor-footer,
+.history-item {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.panel__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue-deep);
+  text-transform: uppercase;
+}
+
+.panel h2 {
+  margin: 6px 0 0;
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.pill {
+  min-width: 160px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(115, 184, 255, 0.14);
+}
+
+.pill--accent {
+  background: rgba(255, 124, 188, 0.14);
+}
+
+.pill span,
+.reward-card__tag,
+.week-day__note,
+.history-token {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pill strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.growth-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.95fr) minmax(0, 1.2fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.character-panel {
+  padding: 16px;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.94)),
+    linear-gradient(135deg, rgba(255, 213, 106, 0.16), rgba(115, 184, 255, 0.12));
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 18px 34px rgba(120, 90, 170, 0.08);
+}
+
+.character-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.character-badge,
+.quote-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--blue-deep);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.character-aura-text {
+  color: #68638b;
+  font-size: 12px;
+  text-align: right;
+  max-width: 180px;
+}
+
+.character-scene {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 276px;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.9), transparent 26%),
+    linear-gradient(180deg, rgba(240, 247, 255, 0.96), rgba(255, 250, 253, 0.88));
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    inset 0 -24px 44px rgba(255, 255, 255, 0.58);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
+}
+
+.character-scene::before {
+  content: "";
+  position: absolute;
+  inset: auto 10% 12px;
+  height: 76px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(144, 211, 255, 0.34), rgba(144, 211, 255, 0) 72%);
+  filter: blur(4px);
+}
+
+.character-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.72), transparent 14%),
+    radial-gradient(circle at 82% 14%, rgba(255, 255, 255, 0.54), transparent 12%);
+  pointer-events: none;
+}
+
+.character-scene.character-scene--tree {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.92), transparent 25%),
+    linear-gradient(180deg, #eefdf5 0%, #fefcf8 100%);
+}
+
+.character-scene.character-scene--turtle {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.92), transparent 25%),
+    linear-gradient(180deg, #eefcff 0%, #fbfcff 100%);
+}
+
+.character-scene.character-scene--cat {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.92), transparent 25%),
+    linear-gradient(180deg, #fff8ef 0%, #fffafd 100%);
+}
+
+.character-scene.level-soft::before {
+  opacity: 0.74;
+}
+
+.character-scene.level-mid::before {
+  opacity: 0.92;
+  transform: scale(1.08);
+}
+
+.character-scene.level-high::before {
+  opacity: 1;
+  transform: scale(1.16);
+}
+
+.character-scene.is-celebrating {
+  animation: celebrateBg 1.2s ease;
+}
+
+.character-scene.is-clickable {
+  cursor: pointer;
+}
+
+.character-scene.is-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(115, 184, 255, 0.22),
+    0 16px 28px rgba(125, 103, 201, 0.12);
+}
+
+.character-scene:active {
+  transform: translateY(0) scale(0.995);
+}
+
+.character-scene.is-pat .character-wrap {
+  animation: patBounce 0.9s ease;
+}
+
+.character-scene.is-tail .tail,
+.character-scene.is-tail .whisker {
+  animation: tailWag 0.9s ease;
+}
+
+.character-scene.is-glow {
+  filter: saturate(1.18) brightness(1.04);
+  box-shadow:
+    inset 0 0 0 1px rgba(115, 184, 255, 0.18),
+    0 0 0 10px rgba(115, 184, 255, 0.08),
+    0 0 48px rgba(144, 211, 255, 0.42);
+}
+
+.character-scene.is-glow::after {
+  content: "";
+  position: absolute;
+  inset: 3% 8%;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 50% 50%, rgba(139, 124, 255, 0.18), rgba(139, 124, 255, 0) 58%);
+  animation: shimmerFlash 1s ease;
+  pointer-events: none;
+}
+
+.character-scene.is-glow .scene-ring {
+  animation: glowRingPulse 1s ease;
+}
+
+.character-scene.is-glow .glow-core,
+.character-scene.is-glow .glow-stars {
+  animation: corePulse 1s ease;
+}
+
+.character-scene.is-bounce .character-wrap {
+  animation: bounce 0.9s ease;
+}
+
+.character-scene.is-nod .head {
+  animation: petNod 0.9s ease;
+}
+
+.character-interaction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.character-hint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.character-bubble {
+  max-width: 260px;
+  padding: 10px 14px;
+  border-radius: 18px 18px 6px 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 14px 24px rgba(74, 63, 123, 0.08);
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+}
+
+.character-bubble.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.scene-ripple,
+.scene-particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.scene-ripple {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 18px rgba(144, 211, 255, 0.42);
+  transform: translate(-50%, -50%);
+  animation: rippleBurst 0.9s ease forwards;
+}
+
+.scene-particle {
+  transform: translate(-50%, -50%) scale(var(--scale, 1));
+  opacity: 0;
+  animation: particleBurst 0.95s ease forwards;
+  animation-delay: var(--delay, 0ms);
+  font-weight: 700;
+}
+
+.scene-particle--spark {
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 18px rgba(144, 211, 255, 0.62);
+}
+
+.scene-particle--glow {
+  color: #fff7a0;
+  text-shadow:
+    0 0 10px rgba(255, 247, 160, 0.92),
+    0 0 24px rgba(255, 220, 122, 0.78);
+}
+
+.scene-particle--soft {
+  color: #ff9fca;
+  text-shadow:
+    0 0 8px rgba(255, 159, 202, 0.9),
+    0 0 18px rgba(255, 255, 255, 0.6);
+}
+
+.character-panel__footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.scene-backlights {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene-orb,
+.scene-ring {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.scene-orb {
+  filter: blur(16px);
+  opacity: 0.38;
+}
+
+.scene-orb--one {
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 68%);
+}
+
+.scene-orb--two {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(115, 184, 255, 0.4), rgba(115, 184, 255, 0) 68%);
+}
+
+.scene-orb--three {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(255, 124, 188, 0.18), rgba(255, 124, 188, 0) 70%);
+}
+
+.scene-ring {
+  width: 188px;
+  height: 188px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  opacity: 0.44;
+}
+
+.scene-ring--outer {
+  width: 220px;
+  height: 220px;
+  border-color: rgba(255, 255, 255, 0.36);
+}
+
+.aura-tiny .scene-orb--two {
+  opacity: 0.18;
+}
+
+.aura-soft .scene-orb--two {
+  opacity: 0.32;
+}
+
+.aura-strong .scene-orb--two,
+.aura-strong .scene-ring {
+  opacity: 0.52;
+}
+
+.aura-legend .scene-orb--one,
+.aura-legend .scene-orb--two,
+.aura-legend .scene-orb--three,
+.aura-legend .scene-ring {
+  opacity: 0.72;
+}
+
+.aura-legend .scene-ring--outer {
+  animation: driftRing 6s linear infinite;
+}
+
+.aura-legend .scene-ring--inner {
+  animation: driftRingReverse 5s linear infinite;
+}
+
+.mini-stat,
+.stat-card,
+.inventory-chip,
+.milestone-card,
+.rule-card,
+.toggle-card,
+.week-day,
+.history-item,
+.character-choice {
+  border-radius: var(--radius-lg);
+}
+
+.mini-stat {
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.mini-stat span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.mini-stat strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.growth-board {
+  display: grid;
+  gap: 14px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat-card {
+  padding: 16px;
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.stat-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.stat-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.stat-card--blue {
+  background: linear-gradient(180deg, rgba(115, 184, 255, 0.18), rgba(255, 255, 255, 0.94));
+}
+
+.stat-card--pink {
+  background: linear-gradient(180deg, rgba(255, 124, 188, 0.18), rgba(255, 255, 255, 0.94));
+}
+
+.stat-card--yellow {
+  background: linear-gradient(180deg, rgba(255, 213, 106, 0.22), rgba(255, 255, 255, 0.94));
+}
+
+.progress-group,
+.level-progress {
+  display: grid;
+  gap: 18px;
+}
+
+.progress-row {
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 14px;
+  font-weight: 600;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(115, 184, 255, 0.16);
+}
+
+.progress-bar--pink {
+  background: rgba(255, 124, 188, 0.18);
+}
+
+.progress-bar--level {
+  background: rgba(139, 124, 255, 0.16);
+}
+
+.progress-bar__fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blue), var(--blue-deep));
+  transition: width 0.3s ease;
+}
+
+.progress-bar--pink .progress-bar__fill {
+  background: linear-gradient(90deg, #ff8abb, var(--pink-deep));
+}
+
+.progress-bar--level .progress-bar__fill {
+  background: linear-gradient(90deg, var(--purple), var(--mint));
+}
+
+.inventory-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.inventory-chip {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+}
+
+.inventory-chip span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.inventory-chip strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.reward-board,
+.milestone-list,
+.history-list,
+.checkin-grid,
+.rule-grid,
+.week-days,
+.character-options {
+  display: grid;
+  gap: 14px;
+}
+
+.reward-board {
+  margin-top: 16px;
+  grid-template-columns: 1fr;
+}
+
+.reward-card {
+  padding: 18px;
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.reward-card h3 {
+  margin: 8px 0;
+}
+
+.reward-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.reward-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.reward-card--blue {
+  background: linear-gradient(180deg, rgba(115, 184, 255, 0.18), rgba(255, 255, 255, 0.92));
+}
+
+.reward-card--pink {
+  background: linear-gradient(180deg, rgba(255, 124, 188, 0.18), rgba(255, 255, 255, 0.92));
+}
+
+.reward-card.is-claimed {
+  box-shadow: inset 0 0 0 2px rgba(96, 211, 148, 0.34);
+}
+
+.quote-card {
+  position: relative;
+  margin-top: 16px;
+  padding: 22px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.86)),
+    linear-gradient(135deg, rgba(115, 184, 255, 0.12), rgba(139, 124, 255, 0.12));
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.quote-card::before {
+  content: "“";
+  position: absolute;
+  left: 18px;
+  top: 12px;
+  font-size: 54px;
+  line-height: 1;
+  color: rgba(93, 121, 255, 0.14);
+  font-weight: 700;
+}
+
+.quote-card__text {
+  position: relative;
+  margin: 0;
+  padding-left: 18px;
+  font-size: 20px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.quote-card__author {
+  margin: 14px 0 0;
+  color: var(--muted);
+  text-align: right;
+  font-weight: 600;
+}
+
+.focus-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.focus-card {
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.focus-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.focus-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 26px;
+}
+
+.focus-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.date-picker,
+.note-area {
+  display: grid;
+  gap: 8px;
+}
+
+.date-picker span,
+.note-area span,
+.job-input label {
+  font-weight: 600;
+}
+
+.date-picker input,
+.job-input input,
+.note-area textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(99, 88, 145, 0.14);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--text);
+}
+
+.checkin-grid {
+  margin-top: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.toggle-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(99, 88, 145, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.toggle-card input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.toggle-card__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  transition: transform 0.2s ease;
+}
+
+.toggle-card strong {
+  font-size: 17px;
+}
+
+.toggle-card em {
+  font-style: normal;
+  color: var(--blue-deep);
+  font-weight: 700;
+}
+
+.toggle-card input:checked + .toggle-card__body {
+  background: linear-gradient(135deg, rgba(115, 184, 255, 0.18), rgba(255, 124, 188, 0.12));
+  box-shadow: inset 0 0 0 2px rgba(115, 184, 255, 0.32);
+}
+
+.toggle-card:hover .toggle-card__body {
+  transform: translateY(-1px);
+}
+
+.job-input {
+  margin-top: 14px;
+}
+
+.job-input__field {
+  margin-top: 10px;
+}
+
+.job-input input {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.note-area {
+  margin-top: 14px;
+}
+
+.note-area textarea {
+  resize: vertical;
+  min-height: 104px;
+}
+
+.daily-score-card {
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: rgba(255, 213, 106, 0.18);
+}
+
+.daily-score-card span {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.daily-score-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 26px;
+}
+
+.primary-btn,
+.secondary-btn,
+.ghost-btn,
+.import-btn {
+  border-radius: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.primary-btn,
+.secondary-btn,
+.import-btn {
+  padding: 14px 18px;
+  font-weight: 700;
+}
+
+.primary-btn {
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue-deep), var(--pink-deep));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 14px 28px rgba(95, 85, 185, 0.2);
+}
+
+.secondary-btn,
+.import-btn {
+  color: var(--text);
+  background: rgba(115, 184, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+.ghost-btn {
+  padding: 12px 14px;
+  background: rgba(255, 124, 188, 0.1);
+  color: var(--pink-deep);
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.ghost-btn:hover,
+.import-btn:hover,
+.week-day:hover,
+.character-choice:hover {
+  transform: translateY(-1px);
+}
+
+.primary-btn:disabled,
+.secondary-btn:disabled,
+.ghost-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.week-days {
+  margin-top: 18px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.week-day {
+  text-align: left;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+}
+
+.week-day.is-selected {
+  background: linear-gradient(180deg, rgba(115, 184, 255, 0.16), rgba(255, 255, 255, 0.96));
+  box-shadow: inset 0 0 0 2px rgba(115, 184, 255, 0.28);
+}
+
+.week-day.is-sunday {
+  background: linear-gradient(180deg, rgba(255, 213, 106, 0.2), rgba(255, 255, 255, 0.95));
+}
+
+.week-day__name,
+.week-day__date,
+.week-day__score {
+  display: block;
+}
+
+.week-day__name {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.week-day__date {
+  margin-top: 6px;
+  font-size: 20px;
+}
+
+.week-day__score {
+  margin-top: 14px;
+  font-style: normal;
+  color: var(--blue-deep);
+  font-weight: 700;
+}
+
+.milestone-list {
+  margin-top: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.milestone-card {
+  position: relative;
+  padding: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+}
+
+.milestone-card.is-unlocked {
+  background: linear-gradient(180deg, rgba(139, 124, 255, 0.16), rgba(255, 255, 255, 0.94));
+  box-shadow: inset 0 0 0 2px rgba(139, 124, 255, 0.18);
+}
+
+.milestone-card__level {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.milestone-card h3 {
+  margin: 8px 0 6px;
+  font-size: 20px;
+}
+
+.milestone-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.milestone-card strong {
+  display: block;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.history-list {
+  margin-top: 18px;
+}
+
+.history-item {
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+}
+
+.history-item__title,
+.history-item__subtitle {
+  margin: 0;
+}
+
+.history-item__title {
+  font-size: 18px;
+}
+
+.history-item__subtitle {
+  margin-top: 8px;
+  line-height: 1.7;
+}
+
+.history-item__score {
+  display: grid;
+  gap: 8px;
+  min-width: 164px;
+}
+
+.history-token {
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(115, 184, 255, 0.14);
+  font-size: 13px;
+}
+
+.empty-state {
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--muted);
+  text-align: center;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 26px;
+  padding: 20px 22px 110px;
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 34px rgba(120, 90, 170, 0.08);
+}
+
+.site-footer strong {
+  display: block;
+  font-size: 17px;
+}
+
+.site-footer p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.site-footer__meta {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-width: 240px;
+}
+
+.site-footer__meta span {
+  display: inline-flex;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(115, 184, 255, 0.12);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mobile-action-bar {
+  position: fixed;
+  left: 50%;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  z-index: 18;
+  display: none;
+  grid-template-columns: 0.9fr 0.9fr 1.2fr;
+  gap: 10px;
+  width: min(calc(100% - 20px), 560px);
+  padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 36px rgba(52, 36, 90, 0.16);
+}
+
+.mobile-action-bar__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.character-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.character-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(33, 25, 58, 0.34);
+  backdrop-filter: blur(10px);
+}
+
+.character-modal__card {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  padding: 24px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 34px 80px rgba(52, 36, 90, 0.25);
+}
+
+.rule-tip-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.rule-tip-card {
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(246, 248, 255, 0.92);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+}
+
+.rule-tip-card__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rule-tip-card__icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(115, 184, 255, 0.18);
+  font-size: 20px;
+}
+
+.rule-tip-card strong {
+  display: block;
+  font-size: 16px;
+}
+
+.rule-tip-card p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.character-options {
+  margin-top: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.character-choice {
+  padding: 18px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(99, 88, 145, 0.08);
+}
+
+.character-choice.is-selected {
+  box-shadow: inset 0 0 0 2px rgba(115, 184, 255, 0.34);
+  background: linear-gradient(180deg, rgba(115, 184, 255, 0.16), rgba(255, 255, 255, 0.96));
+}
+
+.character-choice__preview {
+  display: grid;
+  place-items: center;
+  min-height: 132px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.78), transparent 22%),
+    linear-gradient(180deg, rgba(255, 213, 106, 0.16), rgba(115, 184, 255, 0.12));
+}
+
+.character-choice h3 {
+  margin: 16px 0 6px;
+}
+
+.character-choice p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.character-choice__tag {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 124, 188, 0.12);
+  color: var(--pink-deep);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.character-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.character-svg {
+  width: min(100%, 238px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 16px 24px rgba(74, 63, 123, 0.12));
+  position: relative;
+  z-index: 2;
+}
+
+.character-choice__preview .character-svg {
+  width: min(100%, 112px);
+}
+
+.character-scene .character-wrap,
+.character-choice__preview .character-wrap {
+  animation: float 3.8s ease-in-out infinite;
+}
+
+.character-scene.is-celebrating .character-wrap {
+  animation: bounce 0.9s ease;
+}
+
+.character-svg .leaf,
+.character-svg .blossom,
+.character-svg .fruit {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: sway 3.2s ease-in-out infinite;
+}
+
+.character-svg .sparkle {
+  animation: pulse 2.2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.character-svg .glow-core {
+  animation: softGlow 2.8s ease-in-out infinite;
+}
+
+.character-svg .glow-stars {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.62));
+}
+
+.character-svg .tail,
+.character-svg .whisker {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: sway 2.2s ease-in-out infinite;
+}
+
+.character-svg .head {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: nod 2.8s ease-in-out infinite;
+}
+
+.character-svg .shell-mark,
+.character-svg .star-mark {
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes nod {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(0.94) translateY(10px);
+  }
+  50% {
+    transform: scale(1.04) translateY(-10px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes patBounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-10px) scale(1.03);
+  }
+  65% {
+    transform: translateY(2px) scale(0.99);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tailWag {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(12deg);
+  }
+  75% {
+    transform: rotate(-8deg);
+  }
+}
+
+@keyframes petNod {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-7px);
+  }
+  60% {
+    transform: translateY(2px);
+  }
+}
+
+@keyframes shimmerFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes rippleBurst {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(6.6);
+  }
+}
+
+@keyframes particleBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(calc(var(--scale, 1) * 0.4));
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--scale, 1));
+  }
+}
+
+@keyframes celebrateBg {
+  0% {
+    box-shadow: inset 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.08);
+  }
+  100% {
+    box-shadow: inset 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes softGlow {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.58;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glowRingPulse {
+  0% {
+    opacity: 0.2;
+    transform: translate(-50%, -50%) scale(0.84);
+  }
+  40% {
+    opacity: 0.88;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.34);
+  }
+}
+
+@keyframes corePulse {
+  0% {
+    opacity: 0.36;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.18);
+  }
+  100% {
+    opacity: 0.44;
+    filter: brightness(1);
+  }
+}
+
+@keyframes driftRing {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes driftRingReverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@media (max-width: 1100px) {
+  .growth-panel,
+  .weekly-panel,
+  .quote-panel,
+  .focus-panel,
+  .checkin-panel {
+    grid-column: span 12;
+  }
+
+  .hero__content,
+  .growth-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer {
+    flex-direction: column;
+  }
+
+  .milestone-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .stats-grid,
+  .inventory-strip,
+  .character-options,
+  .rule-tip-list {
+    grid-template-columns: 1fr;
+  }
+
+  .week-days {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .quick-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+
+  .quick-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .milestone-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    width: min(100% - 20px, 760px);
+    padding-top: 14px;
+  }
+
+  .hero,
+  .panel,
+  .character-modal__card {
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .hero__actions,
+  .quick-nav {
+    width: 100%;
+  }
+
+  .install-banner,
+  .panel__head,
+  .editor-footer,
+  .history-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .checkin-grid,
+  .week-days,
+  .milestone-list {
+    grid-template-columns: 1fr;
+  }
+
+  .history-actions,
+  .panel-actions,
+  .install-banner__actions,
+  .job-input__field {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .import-btn,
+  .history-actions > *,
+  .panel-actions > *,
+  .install-banner__actions > *,
+  .hero__actions > * {
+    width: 100%;
+    text-align: center;
+  }
+
+  .quick-nav {
+    margin-bottom: 16px;
+    padding: 10px;
+  }
+
+  .quick-nav a {
+    min-width: max-content;
+  }
+
+  .character-panel__footer {
+    grid-template-columns: 1fr;
+  }
+
+  .character-interaction-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .character-aura-text {
+    max-width: none;
+    text-align: left;
+  }
+
+  .history-item__score {
+    width: 100%;
+  }
+
+  .site-footer {
+    padding: 18px 18px 96px;
+  }
+
+  .site-footer__meta {
+    min-width: 0;
+  }
+
+  .mobile-action-bar {
+    display: grid;
+  }
+}
+
+</style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero__badge">活力打卡小工具</div>
+        <div class="hero__content">
+          <div>
+            <p class="eyebrow">公开可部署 · 双结算成长系统 · 移动端友好</p>
+            <h1>自律冲刺站</h1>
+            <p class="hero__text">
+              每周积分用来兑换现实奖励，累计积分用来推动角色成长升级。现在这套版本已经整理成适合公开发布的静态网页，电脑和手机都能顺手使用。
+            </p>
+            <div class="hero__actions">
+              <a class="primary-btn hero__link" href="#checkin">立即开始打卡</a>
+              <a class="secondary-btn hero__link" href="#history">查看历史成长</a>
+            </div>
+            <div class="hero__public-note">
+              数据默认保存在当前浏览器本地，适合公开部署为个人自律网页工具。
+            </div>
+          </div>
+          <div class="hero__stats">
+            <article class="hero-stat">
+              <span>每周结算</span>
+              <strong>360 / 420</strong>
+              <p>攀岩 / 豪华餐兑换线</p>
+            </article>
+            <article class="hero-stat">
+              <span>累计升级</span>
+              <strong>2000+</strong>
+              <p>L0 到更高等级持续进化</p>
+            </article>
+          </div>
+        </div>
+        <div id="installBanner" class="install-banner" hidden>
+          <div>
+            <p class="install-banner__label">像 App 一样使用</p>
+            <strong id="installTitle">把自律冲刺站添加到桌面</strong>
+            <p id="installText" class="install-banner__text">
+              安装后可全屏打开，像手机应用一样随手打卡。
+            </p>
+          </div>
+          <div class="install-banner__actions">
+            <button id="installBtn" class="primary-btn" type="button">安装到桌面</button>
+            <button id="dismissInstallBtn" class="secondary-btn" type="button">稍后再说</button>
+          </div>
+        </div>
+      </header>
+
+      <nav class="quick-nav" aria-label="页面快捷导航">
+        <a href="#growth">成长</a>
+        <a href="#weekly">周奖励</a>
+        <a href="#checkin">打卡</a>
+        <a href="#week-view">本周</a>
+        <a href="#history">历史</a>
+      </nav>
+
+      <main class="layout">
+        <section id="growth" class="panel panel--gradient growth-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">累计养成</p>
+              <h2 id="growthTitle">请选择你的养成伙伴</h2>
+              <p id="growthSubtitle" class="muted">累计积分不清零，会从你开始打卡的第一天一直算到现在。</p>
+            </div>
+            <div class="panel-actions">
+              <button id="chooseCharacterBtn" class="secondary-btn" type="button">选择 / 更换角色</button>
+            </div>
+          </div>
+
+          <div class="growth-grid">
+            <div class="character-panel">
+              <div class="character-panel__header">
+                <div class="character-badge">Cute growth mode</div>
+                <div id="characterAura" class="character-aura-text">Your tiny companion is waiting.</div>
+              </div>
+              <div id="characterScene" class="character-scene"></div>
+              <div class="character-interaction-bar">
+                <span id="characterHint" class="character-hint">点一下角色，试试摸摸头或触发发光反馈</span>
+                <span id="characterBubble" class="character-bubble" hidden>Hi.</span>
+              </div>
+              <div class="character-panel__footer">
+                <div class="mini-stat">
+                  <span>当前阶段</span>
+                  <strong id="stageName">未选择</strong>
+                </div>
+                <div class="mini-stat">
+                  <span>成长风格</span>
+                  <strong id="characterMood">等待绑定</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="growth-board">
+              <div class="stats-grid">
+                <article class="stat-card stat-card--blue">
+                  <span>累计总积分</span>
+                  <strong id="lifetimeScore">0</strong>
+                  <p id="journeyStartText">从开始记录那天起持续累计</p>
+                </article>
+                <article class="stat-card stat-card--pink">
+                  <span>当前等级</span>
+                  <strong id="currentLevel">L0</strong>
+                  <p id="levelTitle">初始形态</p>
+                </article>
+                <article class="stat-card stat-card--yellow">
+                  <span>总打卡天数</span>
+                  <strong id="activeDays">0</strong>
+                  <p id="totalRewardsText">奖励背包还在等待开启</p>
+                </article>
+              </div>
+
+              <div class="level-progress">
+                <div class="progress-row">
+                  <span id="levelProgressLabel">距离 L1 还差 2000 分</span>
+                  <strong id="levelProgressValue">0 / 2000</strong>
+                </div>
+                <div class="progress-bar progress-bar--level">
+                  <div id="levelBar" class="progress-bar__fill"></div>
+                </div>
+              </div>
+
+              <div class="inventory-strip">
+                <div class="inventory-chip">
+                  <span>攀岩券</span>
+                  <strong id="climbCount">x0</strong>
+                </div>
+                <div class="inventory-chip">
+                  <span>豪华餐券</span>
+                  <strong id="feastCount">x0</strong>
+                </div>
+                <div class="inventory-chip">
+                  <span>已解锁节点</span>
+                  <strong id="milestoneCount">0</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="weekly" class="panel weekly-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">周结算</p>
+              <h2 id="weekScore">0</h2>
+              <p id="weekRange" class="muted">--</p>
+            </div>
+            <div class="panel-actions">
+              <div class="pill">
+                <span>本周目标</span>
+                <strong id="goalHint">向 360 分冲刺</strong>
+              </div>
+              <div class="pill pill--accent">
+                <span>今日状态</span>
+                <strong id="todayStatus">准备开冲</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-group">
+            <div>
+              <div class="progress-row">
+                <span>攀岩奖励 360 分</span>
+                <strong id="reward360Text">还差 360</strong>
+              </div>
+              <div class="progress-bar">
+                <div id="reward360Bar" class="progress-bar__fill"></div>
+              </div>
+            </div>
+            <div>
+              <div class="progress-row">
+                <span>豪华放纵餐 420 分</span>
+                <strong id="reward420Text">还差 420</strong>
+              </div>
+              <div class="progress-bar progress-bar--pink">
+                <div id="reward420Bar" class="progress-bar__fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="weeklyRewardList" class="reward-board"></div>
+        </section>
+
+        <section class="panel quote-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">Daily quote</p>
+              <h2 id="quoteTitle">Today’s gentle reminder</h2>
+            </div>
+            <div class="quote-pill">Refreshes every day</div>
+          </div>
+          <article class="quote-card">
+            <p id="quoteText" class="quote-card__text">We are what we repeatedly do. Excellence, then, is not an act but a habit.</p>
+            <p id="quoteAuthor" class="quote-card__author">Aristotle</p>
+          </article>
+        </section>
+
+        <section id="checkin" class="panel checkin-panel">
+          <div class="panel__head panel__head--compact">
+            <div>
+              <p class="panel__label">每日打卡</p>
+              <h2 id="editorTitle">每日哲理金句译文会显示在这里</h2>
+            </div>
+            <label class="date-picker">
+              <span>选择日期</span>
+              <input id="entryDate" type="date" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel focus-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">今日核心</p>
+              <h2>让今天的得分更完整</h2>
+            </div>
+            <p class="muted">运动、求职、睡眠、情绪四条线尽量都点亮，成长会更快。</p>
+          </div>
+          <div class="focus-grid">
+            <article class="focus-card">
+              <span>运动</span>
+              <strong>40 分</strong>
+              <p>游泳和健身完成越完整，周奖励越稳。</p>
+            </article>
+            <article class="focus-card">
+              <span>求职</span>
+              <strong>可累计</strong>
+              <p>秋招时长可以不断叠加，是最稳定的成长来源。</p>
+            </article>
+            <article class="focus-card">
+              <span>睡眠 + 情绪</span>
+              <strong>30 分</strong>
+              <p>这是让自律不崩盘的地基，越轻松越容易长期坚持。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel checkin-panel">
+          <div class="checkin-grid">
+            <label class="toggle-card">
+              <input id="swimCheck" type="checkbox" />
+              <span class="toggle-card__body">
+                <strong>游泳</strong>
+                <em>+20 分</em>
+              </span>
+            </label>
+
+            <label class="toggle-card">
+              <input id="workoutCheck" type="checkbox" />
+              <span class="toggle-card__body">
+                <strong>健身</strong>
+                <em>+20 分</em>
+              </span>
+            </label>
+
+            <label class="toggle-card">
+              <input id="sleepCheck" type="checkbox" />
+              <span class="toggle-card__body">
+                <strong>12 点前睡</strong>
+                <em>+20 分</em>
+              </span>
+            </label>
+
+            <label class="toggle-card">
+              <input id="moodCheck" type="checkbox" />
+              <span class="toggle-card__body">
+                <strong>开心快乐</strong>
+                <em>+10 分</em>
+              </span>
+            </label>
+          </div>
+
+          <div class="job-input">
+            <label for="jobHours">秋招准备时长</label>
+            <div class="job-input__field">
+              <button type="button" class="ghost-btn" data-hours-step="-0.5">-0.5h</button>
+              <input id="jobHours" type="number" min="0" step="0.5" placeholder="0" />
+              <button type="button" class="ghost-btn" data-hours-step="0.5">+0.5h</button>
+            </div>
+            <p id="jobScoreHint" class="muted">当前计分：0 分</p>
+          </div>
+
+          <label class="note-area">
+            <span>今日一句鼓励</span>
+            <textarea id="dailyNote" rows="3" placeholder="写点今天值得夸夸自己的事"></textarea>
+          </label>
+
+          <div class="editor-footer">
+            <div class="daily-score-card">
+              <span>当日积分</span>
+              <strong id="dailyScore">0 分</strong>
+            </div>
+            <button id="saveEntryBtn" class="primary-btn" type="button">保存今天的打卡并喂养角色</button>
+          </div>
+        </section>
+
+        <section id="week-view" class="panel week-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">周面板</p>
+              <h2>选中日期所在周</h2>
+            </div>
+            <button id="jumpTodayBtn" class="secondary-btn" type="button">回到今天</button>
+          </div>
+          <div id="weekDays" class="week-days"></div>
+        </section>
+
+        <section class="panel milestone-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">等级里程碑</p>
+              <h2>累计成长路线</h2>
+            </div>
+            <p id="milestoneHint" class="muted">达到指定累计积分后自动点亮节点。</p>
+          </div>
+          <div id="milestoneList" class="milestone-list"></div>
+        </section>
+
+        <section id="history" class="panel history-panel">
+          <div class="panel__head">
+            <div>
+              <p class="panel__label">历史记录</p>
+              <h2>每周战绩与兑换</h2>
+            </div>
+            <div class="history-actions">
+              <button id="exportBtn" class="secondary-btn" type="button">导出数据</button>
+              <label class="import-btn">
+                导入数据
+                <input id="importInput" type="file" accept="application/json" hidden />
+              </label>
+            </div>
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div>
+          <strong>公开版本说明</strong>
+          <p>
+            这个版本适合部署到静态托管平台对互联网公开访问，核心数据仍保存在访问者自己的浏览器本地。
+          </p>
+        </div>
+        <div class="site-footer__meta">
+          <span>适合部署到 Vercel / GitHub Pages / Netlify</span>
+          <span>PWA · Mobile-first · Local-first</span>
+        </div>
+      </footer>
+    </div>
+
+    <div class="mobile-action-bar">
+      <button id="mobileTodayBtn" class="secondary-btn" type="button">回到今天</button>
+      <a class="secondary-btn mobile-action-bar__link" href="#growth">看成长</a>
+      <button id="mobileSaveBtn" class="primary-btn" type="button">保存打卡</button>
+    </div>
+
+    <div id="characterModal" class="character-modal" hidden>
+      <div class="character-modal__backdrop"></div>
+      <div class="character-modal__card">
+        <p class="panel__label">初始化提示</p>
+        <h2>选择你的养成伙伴</h2>
+        <p class="muted">
+          初次选定后就能开始成长，后面也可以随时更换角色外观，不影响积分和等级。开始前先快速看一眼玩法规则。
+        </p>
+        <div id="ruleTipList" class="rule-tip-list"></div>
+        <div id="characterOptionList" class="character-options"></div>
+        <div class="character-modal__actions">
+          <button id="closeCharacterModal" class="secondary-btn" type="button">先看看再说</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+const STORAGE_KEY = "discipline-sprint-station-v2";
+const INSTALL_DISMISSED_KEY = "discipline-sprint-install-dismissed-v1";
+const WEEKDAY_NAMES = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+const LEVEL_THRESHOLDS = [0, 2000, 5000, 8000, 12000, 16000, 20000];
+const WEEKLY_REWARDS = [
+  { id: "climb", threshold: 360, name: "攀岩一次", description: "本周达到 360 分，可兑换一次攀岩。", style: "blue" },
+  { id: "feast", threshold: 420, name: "豪华放纵餐", description: "本周达到 420 分，可兑换一次豪华放纵餐。", style: "pink" },
+];
+const RULE_TIPS = [
+  { icon: "📅", title: "周结算", text: "每周一重新开始计算周积分，360 和 420 是你本周现实奖励的兑换门槛。" },
+  { icon: "🧬", title: "累计结算", text: "每日积分会永久累积，用来推动角色等级从 L0 一路成长到更高阶段。" },
+  { icon: "🎁", title: "奖励系统", text: "周奖励会进入背包，累计里程碑会点亮成长节点，现实反馈和虚拟反馈同时存在。" },
+  { icon: "🐾", title: "角色养成", text: "角色初次选定后即可开始成长，后续换皮不影响你的积分、等级与历史记录。" },
+];
+const DAILY_QUOTES = [
+  {
+    text: "Small disciplined steps, repeated daily, become a life you can trust.",
+    translation: "日复一日的小小自律，会慢慢长成你能够信赖的生活。",
+    author: "Anonymous",
+  },
+  {
+    text: "The future is shaped quietly by what you do when no one is watching.",
+    translation: "未来，往往是在无人注视时，被你一点点悄悄塑造出来的。",
+    author: "Anonymous",
+  },
+  {
+    text: "A calm mind and a steady routine can carry you farther than bursts of motivation.",
+    translation: "比起短暂的激情，平静的内心和稳定的节奏更能带你走远。",
+    author: "Anonymous",
+  },
+  {
+    text: "Consistency is a gentle kind of power; it rarely shouts, but it changes everything.",
+    translation: "持续，是一种温柔的力量，它很少喧哗，却能悄悄改变一切。",
+    author: "Anonymous",
+  },
+  {
+    text: "You do not rise to your goals every day; you return to the habits you are willing to keep.",
+    translation: "你每天未必都能抵达目标，但一定会回到自己真正坚持下来的习惯里。",
+    author: "Anonymous",
+  },
+  {
+    text: "Take care of today with sincerity, and tomorrow will feel less heavy.",
+    translation: "认真照顾好今天，明天就会轻一点。",
+    author: "Anonymous",
+  },
+  {
+    text: "Discipline is not punishment; it is a form of kindness to your future self.",
+    translation: "自律不是惩罚，而是你对未来自己的温柔照顾。",
+    author: "Anonymous",
+  },
+  {
+    text: "Progress becomes beautiful when patience decides not to give up.",
+    translation: "当耐心决定不放弃时，进步就会开始变得动人。",
+    author: "Anonymous",
+  },
+  {
+    text: "What you repeat becomes your rhythm, and your rhythm becomes your character.",
+    translation: "你反复做的事会变成你的节奏，而你的节奏会塑造你的样子。",
+    author: "Anonymous",
+  },
+  {
+    text: "A meaningful life is often built in ordinary hours handled well.",
+    translation: "有意义的人生，常常是由一个个被认真对待的平凡时刻搭建起来的。",
+    author: "Anonymous",
+  },
+];
+const CHARACTER_INTERACTIONS = {
+  tree: {
+    hint: "点一下树冠，它会轻轻摇叶子发光。",
+    actions: [
+      { type: "pat", bubble: "The leaves lean closer to your kindness." },
+      { type: "glow", bubble: "A warm glow spreads through every branch." },
+      { type: "bounce", bubble: "The tiny tree wiggles happily in the breeze." },
+    ],
+  },
+  turtle: {
+    hint: "点一下乌龟，它会缩缩头再开心探出来。",
+    actions: [
+      { type: "nod", bubble: "The little turtle blinks and nods at you." },
+      { type: "glow", bubble: "Its shell lights up like a tiny shield." },
+      { type: "bounce", bubble: "It does a tiny happy scoot toward you." },
+    ],
+  },
+  cat: {
+    hint: "点一下小猫，它会摇尾巴、蹭蹭你或者亮起小星星。",
+    actions: [
+      { type: "tail", bubble: "Purr... the kitten rubs against your hand." },
+      { type: "bounce", bubble: "Boop. It hops with a soft happy bounce." },
+      { type: "glow", bubble: "Tiny stars sparkle around its whiskers." },
+    ],
+  },
+};
+const CHARACTER_LIBRARY = [
+  {
+    id: "tree",
+    name: "大树",
+    mood: "稳稳扎根型",
+    summary: "从嫩芽慢慢长成会发光的大树，适合喜欢长期积累的你。",
+    milestones: [
+      { maxLevel: 0, stage: "小树苗", title: "刚破土的小萌芽" },
+      { maxLevel: 1, stage: "嫩叶树", title: "开始抽叶，状态变稳" },
+      { maxLevel: 2, stage: "花树", title: "开花阶段，自律更有存在感" },
+      { maxLevel: 4, stage: "果树", title: "结果阶段，收获看得见" },
+      { maxLevel: 6, stage: "灵木", title: "冠幅闪耀，成为你的精神图腾" },
+    ],
+  },
+  {
+    id: "turtle",
+    name: "乌龟",
+    mood: "慢慢变强型",
+    summary: "步子不快但持续前进，每次打卡都在给它的壳增加能量纹路。",
+    milestones: [
+      { maxLevel: 0, stage: "幼龟", title: "慢慢出发，别急也能走很远" },
+      { maxLevel: 1, stage: "稳行龟", title: "步伐稳定，壳面开始发亮" },
+      { maxLevel: 2, stage: "勇气龟", title: "解锁勇气纹章，拖延感下降" },
+      { maxLevel: 4, stage: "守护龟", title: "拥有守护力，自律护甲更厚" },
+      { maxLevel: 6, stage: "传说巨龟", title: "沉稳且强大，真正的长期主义者" },
+    ],
+  },
+  {
+    id: "cat",
+    name: "小猫",
+    mood: "灵气冲刺型",
+    summary: "可爱但有爆发力，积分越高，它越会变得精神饱满、闪闪发光。",
+    milestones: [
+      { maxLevel: 0, stage: "奶猫", title: "刚醒来，准备适应新节奏" },
+      { maxLevel: 1, stage: "活力猫", title: "精神变好，开始主动贴贴" },
+      { maxLevel: 2, stage: "闪亮猫", title: "胡须会发光，冲劲明显提升" },
+      { maxLevel: 4, stage: "守夜猫", title: "会守护作息和状态" },
+      { maxLevel: 6, stage: "星辰猫", title: "拥有传说皮肤，陪你冲长期目标" },
+    ],
+  },
+];
+
+const state = {
+  data: loadData(),
+  selectedDate: getTodayKey(),
+  deferredInstallPrompt: null,
+  characterInteractionTimer: null,
+};
+
+const elements = {
+  installBanner: document.querySelector("#installBanner"),
+  installTitle: document.querySelector("#installTitle"),
+  installText: document.querySelector("#installText"),
+  installBtn: document.querySelector("#installBtn"),
+  dismissInstallBtn: document.querySelector("#dismissInstallBtn"),
+  growthTitle: document.querySelector("#growthTitle"),
+  growthSubtitle: document.querySelector("#growthSubtitle"),
+  chooseCharacterBtn: document.querySelector("#chooseCharacterBtn"),
+  characterScene: document.querySelector("#characterScene"),
+  characterHint: document.querySelector("#characterHint"),
+  characterBubble: document.querySelector("#characterBubble"),
+  characterAura: document.querySelector("#characterAura"),
+  stageName: document.querySelector("#stageName"),
+  characterMood: document.querySelector("#characterMood"),
+  lifetimeScore: document.querySelector("#lifetimeScore"),
+  journeyStartText: document.querySelector("#journeyStartText"),
+  currentLevel: document.querySelector("#currentLevel"),
+  levelTitle: document.querySelector("#levelTitle"),
+  activeDays: document.querySelector("#activeDays"),
+  totalRewardsText: document.querySelector("#totalRewardsText"),
+  levelProgressLabel: document.querySelector("#levelProgressLabel"),
+  levelProgressValue: document.querySelector("#levelProgressValue"),
+  levelBar: document.querySelector("#levelBar"),
+  climbCount: document.querySelector("#climbCount"),
+  feastCount: document.querySelector("#feastCount"),
+  milestoneCount: document.querySelector("#milestoneCount"),
+  weekScore: document.querySelector("#weekScore"),
+  weekRange: document.querySelector("#weekRange"),
+  goalHint: document.querySelector("#goalHint"),
+  todayStatus: document.querySelector("#todayStatus"),
+  reward360Text: document.querySelector("#reward360Text"),
+  reward420Text: document.querySelector("#reward420Text"),
+  reward360Bar: document.querySelector("#reward360Bar"),
+  reward420Bar: document.querySelector("#reward420Bar"),
+  weeklyRewardList: document.querySelector("#weeklyRewardList"),
+  quoteTitle: document.querySelector("#quoteTitle"),
+  quoteText: document.querySelector("#quoteText"),
+  quoteAuthor: document.querySelector("#quoteAuthor"),
+  editorTitle: document.querySelector("#editorTitle"),
+  entryDate: document.querySelector("#entryDate"),
+  swimCheck: document.querySelector("#swimCheck"),
+  workoutCheck: document.querySelector("#workoutCheck"),
+  sleepCheck: document.querySelector("#sleepCheck"),
+  moodCheck: document.querySelector("#moodCheck"),
+  jobHours: document.querySelector("#jobHours"),
+  jobScoreHint: document.querySelector("#jobScoreHint"),
+  dailyNote: document.querySelector("#dailyNote"),
+  dailyScore: document.querySelector("#dailyScore"),
+  saveEntryBtn: document.querySelector("#saveEntryBtn"),
+  mobileSaveBtn: document.querySelector("#mobileSaveBtn"),
+  jumpTodayBtn: document.querySelector("#jumpTodayBtn"),
+  mobileTodayBtn: document.querySelector("#mobileTodayBtn"),
+  weekDays: document.querySelector("#weekDays"),
+  milestoneHint: document.querySelector("#milestoneHint"),
+  milestoneList: document.querySelector("#milestoneList"),
+  historyList: document.querySelector("#historyList"),
+  exportBtn: document.querySelector("#exportBtn"),
+  importInput: document.querySelector("#importInput"),
+  characterModal: document.querySelector("#characterModal"),
+  ruleTipList: document.querySelector("#ruleTipList"),
+  characterOptionList: document.querySelector("#characterOptionList"),
+  closeCharacterModal: document.querySelector("#closeCharacterModal"),
+};
+
+init();
+
+function init() {
+  registerServiceWorker();
+  bindEvents();
+  setupInstallPrompt();
+  renderAll();
+  if (!state.data.characterId) {
+    openCharacterModal();
+  }
+}
+
+function bindEvents() {
+  elements.installBtn.addEventListener("click", handleInstallClick);
+  elements.dismissInstallBtn.addEventListener("click", dismissInstallBanner);
+  elements.chooseCharacterBtn.addEventListener("click", openCharacterModal);
+  elements.closeCharacterModal.addEventListener("click", closeCharacterModal);
+  elements.characterModal.querySelector(".character-modal__backdrop").addEventListener("click", closeCharacterModal);
+
+  elements.entryDate.addEventListener("change", () => {
+    state.selectedDate = elements.entryDate.value || getTodayKey();
+    renderAll();
+  });
+
+  [elements.swimCheck, elements.workoutCheck, elements.sleepCheck, elements.moodCheck].forEach((input) => {
+    input.addEventListener("change", renderDailyScorePreview);
+  });
+
+  elements.jobHours.addEventListener("input", renderDailyScorePreview);
+  elements.dailyNote.addEventListener("input", syncEditorTitle);
+
+  document.querySelectorAll("[data-hours-step]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const step = Number(button.dataset.hoursStep || 0);
+      const current = toSafeHours(elements.jobHours.value);
+      const nextValue = Math.max(0, roundHours(current + step));
+      elements.jobHours.value = nextValue ? String(nextValue) : "";
+      renderDailyScorePreview();
+    });
+  });
+
+  elements.saveEntryBtn.addEventListener("click", handleSaveEntry);
+  elements.mobileSaveBtn.addEventListener("click", handleSaveEntry);
+  elements.jumpTodayBtn.addEventListener("click", () => {
+    state.selectedDate = getTodayKey();
+    renderAll();
+  });
+  elements.mobileTodayBtn.addEventListener("click", () => {
+    state.selectedDate = getTodayKey();
+    renderAll();
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  });
+
+  elements.exportBtn.addEventListener("click", exportData);
+  elements.importInput.addEventListener("change", importData);
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) {
+    return;
+  }
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+      // 静默失败，避免影响主流程
+    });
+  });
+}
+
+function setupInstallPrompt() {
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+  if (isStandalone || hasDismissedInstallBanner()) {
+    hideInstallBanner();
+  }
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    state.deferredInstallPrompt = event;
+    elements.installTitle.textContent = "一键安装到桌面";
+    elements.installText.textContent = "安装后会以独立应用打开，打卡更快，也更像真正的 App。";
+    elements.installBtn.hidden = false;
+    showInstallBanner();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    state.deferredInstallPrompt = null;
+    hideInstallBanner();
+    clearDismissedInstallBanner();
+  });
+
+  if (isIosSafari() && !isStandalone && !hasDismissedInstallBanner()) {
+    elements.installTitle.textContent = "把它添加到主屏幕";
+    elements.installText.textContent = "在 Safari 点底部“分享”，再选“添加到主屏幕”，以后就能像 App 一样打开。";
+    elements.installBtn.hidden = true;
+    showInstallBanner();
+  }
+}
+
+async function handleInstallClick() {
+  if (!state.deferredInstallPrompt) {
+    return;
+  }
+
+  state.deferredInstallPrompt.prompt();
+  await state.deferredInstallPrompt.userChoice;
+  state.deferredInstallPrompt = null;
+  hideInstallBanner();
+}
+
+function dismissInstallBanner() {
+  window.localStorage.setItem(INSTALL_DISMISSED_KEY, "1");
+  hideInstallBanner();
+}
+
+function hasDismissedInstallBanner() {
+  return window.localStorage.getItem(INSTALL_DISMISSED_KEY) === "1";
+}
+
+function clearDismissedInstallBanner() {
+  window.localStorage.removeItem(INSTALL_DISMISSED_KEY);
+}
+
+function showInstallBanner() {
+  elements.installBanner.hidden = false;
+}
+
+function hideInstallBanner() {
+  elements.installBanner.hidden = true;
+}
+
+function renderAll() {
+  const currentEntry = getEntry(state.selectedDate);
+  const weekInfo = getWeekInfo(state.selectedDate);
+  const lifetime = computeLifetimeStats();
+
+  elements.entryDate.value = state.selectedDate;
+  elements.swimCheck.checked = currentEntry.swim;
+  elements.workoutCheck.checked = currentEntry.workout;
+  elements.sleepCheck.checked = currentEntry.sleepBeforeMidnight;
+  elements.moodCheck.checked = currentEntry.happyMood;
+  elements.jobHours.value = currentEntry.jobHours ? String(currentEntry.jobHours) : "";
+  elements.dailyNote.value = currentEntry.note;
+
+  renderGrowth(lifetime);
+  renderWeeklySummary(weekInfo, lifetime);
+  renderDailyQuote();
+  renderDailyScorePreview();
+  renderWeekDays(weekInfo);
+  renderMilestones(lifetime);
+  renderHistory(lifetime);
+  renderRuleTips();
+  renderCharacterOptions(lifetime);
+  syncEditorTitle();
+}
+
+function renderGrowth(lifetime) {
+  const character = getCurrentCharacter();
+  const levelInfo = getLevelInfo(lifetime.totalScore);
+  const stage = getStageForCharacter(character, levelInfo.level);
+  applySceneTheme(character?.id, levelInfo.level);
+
+  if (!character) {
+    elements.growthTitle.textContent = "请选择你的养成伙伴";
+    elements.growthSubtitle.textContent = "先选择角色，累计积分才会驱动外观和等级成长。";
+    elements.characterAura.textContent = "Choose one little soul to grow with you.";
+    elements.characterHint.textContent = "先选择角色，互动模式才会开启。";
+    hideCharacterBubble();
+    elements.characterScene.classList.remove("is-clickable", "is-pat", "is-tail", "is-glow", "is-bounce", "is-nod", "is-celebrating");
+    elements.characterScene.onclick = null;
+    elements.stageName.textContent = "未选择";
+    elements.characterMood.textContent = "等待绑定";
+    elements.characterScene.innerHTML = `<div class="empty-state">从大树、乌龟或小猫里选一个，开始你的长期养成。</div>`;
+  } else {
+    elements.growthTitle.textContent = `${character.name} 正在成长`;
+    elements.growthSubtitle.textContent = `${character.summary}`;
+    elements.characterAura.textContent = getCharacterAuraText(character.id, levelInfo.level);
+    elements.characterHint.textContent = CHARACTER_INTERACTIONS[character.id]?.hint || "点一下角色，看看它会怎么回应你。";
+    elements.stageName.textContent = stage.stage;
+    elements.characterMood.textContent = character.mood;
+    elements.characterScene.innerHTML = renderCharacterScene(character.id, levelInfo.level, stage.stage);
+    bindCharacterInteraction(character.id);
+  }
+
+  elements.lifetimeScore.textContent = String(lifetime.totalScore);
+  elements.currentLevel.textContent = `L${levelInfo.level}`;
+  elements.levelTitle.textContent = stage.title;
+  elements.activeDays.textContent = String(lifetime.activeDays);
+  elements.journeyStartText.textContent = lifetime.firstDate ? `旅程开始于 ${formatDateLabel(lifetime.firstDate)}` : "从第一条打卡开始累计";
+  elements.totalRewardsText.textContent = `已领取 ${lifetime.claimedRewards.length} 次周奖励`;
+  elements.climbCount.textContent = `x${lifetime.rewardInventory.climb}`;
+  elements.feastCount.textContent = `x${lifetime.rewardInventory.feast}`;
+  elements.milestoneCount.textContent = String(lifetime.unlockedMilestones);
+
+  if (levelInfo.nextThreshold === null) {
+    elements.levelProgressLabel.textContent = "已达到当前最高设定节点";
+    elements.levelProgressValue.textContent = `${lifetime.totalScore} 分`;
+    elements.levelBar.style.width = "100%";
+  } else {
+    const previous = LEVEL_THRESHOLDS[levelInfo.level] || 0;
+    const currentValue = lifetime.totalScore - previous;
+    const targetValue = levelInfo.nextThreshold - previous;
+    const percent = Math.max(0, Math.min(100, (currentValue / targetValue) * 100));
+    elements.levelProgressLabel.textContent = `距离 L${levelInfo.level + 1} 还差 ${Math.max(0, levelInfo.nextThreshold - lifetime.totalScore)} 分`;
+    elements.levelProgressValue.textContent = `${currentValue} / ${targetValue}`;
+    elements.levelBar.style.width = `${percent}%`;
+  }
+}
+
+function bindCharacterInteraction(characterId) {
+  const scene = elements.characterScene;
+  const interactionConfig = CHARACTER_INTERACTIONS[characterId];
+  if (!scene || !interactionConfig) {
+    return;
+  }
+
+  scene.classList.add("is-clickable");
+  scene.onclick = (event) => {
+    const action = pickRandom(interactionConfig.actions);
+    triggerCharacterInteraction(action.type, action.bubble, getPointerPosition(event, scene));
+  };
+}
+
+function triggerCharacterInteraction(actionType, bubbleText, pointer = { x: 0.5, y: 0.5 }) {
+  const scene = elements.characterScene;
+  const className = `is-${actionType}`;
+  ["is-pat", "is-tail", "is-glow", "is-bounce", "is-nod"].forEach((name) => scene.classList.remove(name));
+  void scene.offsetWidth;
+  scene.classList.add(className);
+  spawnSceneParticles(actionType, pointer);
+  showCharacterBubble(bubbleText);
+  window.setTimeout(() => {
+    scene.classList.remove(className);
+  }, 900);
+}
+
+function showCharacterBubble(text) {
+  if (state.characterInteractionTimer) {
+    window.clearTimeout(state.characterInteractionTimer);
+  }
+  elements.characterBubble.textContent = text;
+  elements.characterBubble.hidden = false;
+  elements.characterBubble.classList.remove("is-visible");
+  void elements.characterBubble.offsetWidth;
+  elements.characterBubble.classList.add("is-visible");
+  state.characterInteractionTimer = window.setTimeout(() => {
+    hideCharacterBubble();
+  }, 2200);
+}
+
+function hideCharacterBubble() {
+  elements.characterBubble.hidden = true;
+  elements.characterBubble.classList.remove("is-visible");
+}
+
+function renderDailyQuote() {
+  const quote = getCurrentDailyQuote();
+  elements.quoteTitle.textContent = "Today’s gentle reminder";
+  elements.quoteText.textContent = quote.text;
+  elements.quoteAuthor.textContent = quote.author;
+}
+
+function renderRuleTips() {
+  elements.ruleTipList.innerHTML = "";
+  RULE_TIPS.forEach((tip) => {
+    const card = document.createElement("article");
+    card.className = "rule-tip-card";
+    card.innerHTML = `
+      <div class="rule-tip-card__top">
+        <div class="rule-tip-card__icon">${tip.icon}</div>
+        <strong>${tip.title}</strong>
+      </div>
+      <p>${tip.text}</p>
+    `;
+    elements.ruleTipList.appendChild(card);
+  });
+}
+
+function renderWeeklySummary(weekInfo, lifetime) {
+  const weekScore = getWeekScore(weekInfo.weekDates);
+  const todayScore = calculateScore(getEntry(getTodayKey()));
+  const todayName = getWeekdayLabel(getTodayKey());
+  const weekKey = weekInfo.start;
+
+  elements.weekScore.textContent = `${weekScore} 分`;
+  elements.weekRange.textContent = `${formatDateLabel(weekInfo.start)} - ${formatDateLabel(weekInfo.end)}`;
+  elements.todayStatus.textContent = todayScore > 0 ? `${todayName} 已拿 ${todayScore} 分` : `${todayName} 还没开始`;
+
+  updateRewardProgress(weekScore, 360, elements.reward360Bar, elements.reward360Text);
+  updateRewardProgress(weekScore, 420, elements.reward420Bar, elements.reward420Text);
+
+  if (weekScore >= 420) {
+    elements.goalHint.textContent = "本周双奖励都可兑换";
+  } else if (weekScore >= 360) {
+    elements.goalHint.textContent = "攀岩到手，继续冲豪华餐";
+  } else if (isSunday(state.selectedDate)) {
+    elements.goalHint.textContent = "周日补分冲奖励";
+  } else {
+    elements.goalHint.textContent = "本周继续稳步冲线";
+  }
+
+  elements.weeklyRewardList.innerHTML = "";
+  WEEKLY_REWARDS.forEach((reward) => {
+    const unlocked = weekScore >= reward.threshold;
+    const claimed = state.data.weeklyClaims[weekKey]?.[reward.id] || false;
+    const card = document.createElement("article");
+    card.className = `reward-card reward-card--${reward.style}${claimed ? " is-claimed" : ""}`;
+    card.innerHTML = `
+      <span class="reward-card__tag">周奖励</span>
+      <h3>${reward.name}</h3>
+      <p>${reward.description}</p>
+      <div class="reward-card__footer">
+        <div class="muted">${claimed ? "本周已领取" : unlocked ? "已达成兑换条件" : `还差 ${reward.threshold - weekScore} 分`}</div>
+        <button class="${claimed ? "secondary-btn" : "primary-btn"}" type="button" ${!unlocked || claimed ? "disabled" : ""}>
+          ${claimed ? "已领取" : "领取奖励"}
+        </button>
+      </div>
+    `;
+    const button = card.querySelector("button");
+    button.addEventListener("click", () => claimWeeklyReward(weekKey, reward.id));
+    elements.weeklyRewardList.appendChild(card);
+  });
+
+  if (lifetime.lastLevelUpDate === state.selectedDate) {
+    triggerCharacterCelebration();
+  }
+}
+
+function renderDailyScorePreview() {
+  const previewEntry = readEntryFromEditor();
+  const score = calculateScore(previewEntry);
+  elements.dailyScore.textContent = `${score} 分`;
+  elements.jobScoreHint.textContent = `当前计分：${previewEntry.jobHours * 10} 分`;
+}
+
+function renderWeekDays(weekInfo) {
+  elements.weekDays.innerHTML = "";
+  weekInfo.weekDates.forEach((dateKey, index) => {
+    const entry = getEntry(dateKey);
+    const score = calculateScore(entry);
+    const button = document.createElement("button");
+    button.className = "week-day";
+    if (dateKey === state.selectedDate) {
+      button.classList.add("is-selected");
+    }
+    if (index === 6) {
+      button.classList.add("is-sunday");
+    }
+    button.innerHTML = `
+      <span class="week-day__name">${WEEKDAY_NAMES[index]}</span>
+      <strong class="week-day__date">${dateKey.slice(5).replace("-", "/")}</strong>
+      <em class="week-day__score">${score} 分</em>
+      <small class="week-day__note">${getWeekdayNote(dateKey, entry, score)}</small>
+    `;
+    button.addEventListener("click", () => {
+      state.selectedDate = dateKey;
+      renderAll();
+    });
+    elements.weekDays.appendChild(button);
+  });
+}
+
+function renderMilestones(lifetime) {
+  const levelInfo = getLevelInfo(lifetime.totalScore);
+  elements.milestoneHint.textContent = `当前已到 L${levelInfo.level}，累计积分越多，角色形态越完整。`;
+  elements.milestoneList.innerHTML = "";
+
+  LEVEL_THRESHOLDS.forEach((threshold, index) => {
+    const card = document.createElement("article");
+    const unlocked = lifetime.totalScore >= threshold;
+    const character = getCurrentCharacter();
+    const stage = getStageForCharacter(character, index);
+    card.className = `milestone-card${unlocked ? " is-unlocked" : ""}`;
+    card.innerHTML = `
+      <span class="milestone-card__level">L${index}</span>
+      <h3>${threshold} 分</h3>
+      <p>${stage.stage} · ${stage.title}</p>
+      <strong>${unlocked ? "已点亮" : `还差 ${threshold - lifetime.totalScore} 分`}</strong>
+    `;
+    elements.milestoneList.appendChild(card);
+  });
+}
+
+function renderHistory(lifetime) {
+  const weekSummaries = getHistorySummaries();
+  elements.historyList.innerHTML = "";
+
+  if (!weekSummaries.length) {
+    elements.historyList.innerHTML = `<div class="empty-state">先完成几天打卡，这里会出现每周积分、奖励兑换和成长记录。</div>`;
+    return;
+  }
+
+  weekSummaries.forEach((summary) => {
+    const historyItem = document.createElement("article");
+    historyItem.className = "history-item";
+    historyItem.innerHTML = `
+      <div>
+        <h3 class="history-item__title">${summary.startLabel} - ${summary.endLabel}</h3>
+        <p class="history-item__subtitle">${summary.highlight}｜${summary.rewardText}｜本周累计写入总成长 ${summary.weekScore} 分</p>
+      </div>
+      <div class="history-item__score">
+        <div class="history-token">周积分：${summary.weekScore} 分</div>
+        <div class="history-token">奖励：${summary.claimText}</div>
+      </div>
+    `;
+    elements.historyList.appendChild(historyItem);
+  });
+
+  if (lifetime.totalScore === 0) {
+    elements.historyList.insertAdjacentHTML("afterbegin", `<div class="empty-state">目前还没有累计成长，先从今天的打卡开始。</div>`);
+  }
+}
+
+function renderCharacterOptions(lifetime) {
+  elements.characterOptionList.innerHTML = "";
+  const currentId = state.data.characterId;
+  CHARACTER_LIBRARY.forEach((character) => {
+    const levelInfo = getLevelInfo(lifetime.totalScore);
+    const choice = document.createElement("button");
+    choice.className = `character-choice${character.id === currentId ? " is-selected" : ""}`;
+    const stage = getStageForCharacter(character, levelInfo.level);
+    choice.type = "button";
+    choice.innerHTML = `
+      <div class="character-choice__preview">${renderCharacterScene(character.id, levelInfo.level, stage.stage, true)}</div>
+      <h3>${character.name}</h3>
+      <p>${character.summary}</p>
+      <span class="character-choice__tag">${stage.stage}</span>
+    `;
+    choice.addEventListener("click", () => selectCharacter(character.id));
+    elements.characterOptionList.appendChild(choice);
+  });
+}
+
+function syncEditorTitle() {
+  const dateLabel = `${getWeekdayLabel(state.selectedDate)} · ${formatDateLabel(state.selectedDate)}`;
+  const note = elements.dailyNote.value.trim();
+  const quoteTranslation = getCurrentDailyQuote().translation;
+  elements.editorTitle.textContent = note ? `${dateLabel}｜${note.slice(0, 12)}` : `${dateLabel}｜${quoteTranslation}`;
+}
+
+function handleSaveEntry() {
+  const entry = readEntryFromEditor();
+  const previousLifetime = computeLifetimeStats();
+  const previousLevel = getLevelInfo(previousLifetime.totalScore).level;
+
+  state.data.entries[state.selectedDate] = entry;
+  const updatedLifetime = computeLifetimeStats();
+  const updatedLevel = getLevelInfo(updatedLifetime.totalScore).level;
+
+  if (updatedLevel > previousLevel) {
+    state.data.lastLevelUpDate = state.selectedDate;
+  }
+
+  saveData();
+  renderAll();
+  flashButton(updatedLevel > previousLevel);
+}
+
+function flashButton(levelUp) {
+  const original = elements.saveEntryBtn.textContent;
+  const mobileOriginal = elements.mobileSaveBtn.textContent;
+  const nextText = levelUp ? "升级成功，继续喂养角色" : "已保存，角色吃饱啦";
+  elements.saveEntryBtn.textContent = nextText;
+  elements.mobileSaveBtn.textContent = levelUp ? "升级成功" : "已保存";
+  window.setTimeout(() => {
+    elements.saveEntryBtn.textContent = original;
+    elements.mobileSaveBtn.textContent = mobileOriginal;
+  }, 1600);
+}
+
+function claimWeeklyReward(weekKey, rewardId) {
+  state.data.weeklyClaims[weekKey] = state.data.weeklyClaims[weekKey] || {};
+  state.data.weeklyClaims[weekKey][rewardId] = true;
+  saveData();
+  renderAll();
+}
+
+function openCharacterModal() {
+  elements.characterModal.hidden = false;
+}
+
+function closeCharacterModal() {
+  elements.characterModal.hidden = true;
+}
+
+function selectCharacter(characterId) {
+  state.data.characterId = characterId;
+  saveData();
+  closeCharacterModal();
+  renderAll();
+}
+
+function triggerCharacterCelebration() {
+  elements.characterScene.classList.remove("is-celebrating");
+  void elements.characterScene.offsetWidth;
+  elements.characterScene.classList.add("is-celebrating");
+  spawnSceneParticles("celebrate", { x: 0.5, y: 0.45 }, true);
+  showCharacterBubble("Level up! Your companion looks extra proud today.");
+  window.setTimeout(() => {
+    elements.characterScene.classList.remove("is-celebrating");
+  }, 1200);
+}
+
+function spawnSceneParticles(actionType, pointer, dense = false) {
+  if (prefersReducedMotion()) {
+    return;
+  }
+
+  const scene = elements.characterScene;
+  if (!scene) {
+    return;
+  }
+
+  const character = getCurrentCharacter();
+  const particles = getParticleSet(character?.id, actionType, dense);
+  particles.forEach((particleConfig, index) => {
+    const particle = document.createElement("span");
+    particle.className = `scene-particle scene-particle--${particleConfig.kind}`;
+    particle.textContent = particleConfig.symbol;
+    particle.style.left = `${pointer.x * 100}%`;
+    particle.style.top = `${pointer.y * 100}%`;
+    particle.style.setProperty("--dx", `${particleConfig.dx}px`);
+    particle.style.setProperty("--dy", `${particleConfig.dy}px`);
+    particle.style.setProperty("--delay", `${index * 40}ms`);
+    particle.style.setProperty("--scale", String(particleConfig.scale));
+    scene.appendChild(particle);
+    window.setTimeout(() => {
+      particle.remove();
+    }, 1200);
+  });
+
+  const ripple = document.createElement("span");
+  ripple.className = "scene-ripple";
+  ripple.style.left = `${pointer.x * 100}%`;
+  ripple.style.top = `${pointer.y * 100}%`;
+  scene.appendChild(ripple);
+  window.setTimeout(() => {
+    ripple.remove();
+  }, 900);
+}
+
+function getParticleSet(characterId, actionType, dense) {
+  const baseMap = {
+    tree: ["✦", "✦", "❋", "•", "✧", "❊"],
+    turtle: ["✦", "•", "✧", "◦", "✦", "•"],
+    cat: ["✦", "♥", "✧", "★", "•", "♥"],
+    fallback: ["✦", "•", "✧", "★", "•", "✦"],
+  };
+  const symbols = baseMap[characterId] || baseMap.fallback;
+  const count = dense ? 10 : 7;
+  return Array.from({ length: count }, (_, index) => {
+    const angle = (-70 + index * (140 / Math.max(count - 1, 1))) * (Math.PI / 180);
+    const distance = dense ? 54 + (index % 3) * 14 : 36 + (index % 3) * 12;
+    return {
+      symbol: actionType === "glow" ? "✦" : symbols[index % symbols.length],
+      kind: actionType === "glow" || actionType === "celebrate" ? "glow" : actionType === "tail" ? "soft" : "spark",
+      dx: Math.cos(angle) * distance,
+      dy: Math.sin(angle) * distance - 18,
+      scale: dense ? 1 + (index % 3) * 0.12 : 0.9 + (index % 3) * 0.1,
+    };
+  });
+}
+
+function getPointerPosition(event, scene) {
+  if (!event || !scene) {
+    return { x: 0.5, y: 0.5 };
+  }
+  const rect = scene.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / rect.width;
+  const y = (event.clientY - rect.top) / rect.height;
+  return {
+    x: Math.min(0.82, Math.max(0.18, Number.isFinite(x) ? x : 0.5)),
+    y: Math.min(0.76, Math.max(0.2, Number.isFinite(y) ? y : 0.5)),
+  };
+}
+
+function renderCharacterScene(characterId, level, stageName, compact = false) {
+  const stageScale = Math.min(1 + level * 0.05, 1.3);
+  const wrapperClass = compact ? "character-wrap compact" : "character-wrap";
+  const auraClass = level >= 5 ? "aura-legend" : level >= 3 ? "aura-strong" : level >= 1 ? "aura-soft" : "aura-tiny";
+  const label = compact ? "" : `<div class="muted" style="position:absolute;left:18px;top:18px;">${stageName}</div>`;
+  return `
+    ${label}
+    <div class="scene-backlights ${auraClass}">
+      <span class="scene-orb scene-orb--one"></span>
+      <span class="scene-orb scene-orb--two"></span>
+      <span class="scene-orb scene-orb--three"></span>
+      <span class="scene-ring scene-ring--outer"></span>
+      <span class="scene-ring scene-ring--inner"></span>
+    </div>
+    <div class="${wrapperClass} ${auraClass}">${getCharacterSvg(characterId, level, stageScale)}</div>
+  `;
+}
+
+function applySceneTheme(characterId, level) {
+  const scene = elements.characterScene;
+  if (!scene) {
+    return;
+  }
+  scene.classList.remove(
+    "character-scene--tree",
+    "character-scene--turtle",
+    "character-scene--cat",
+    "level-soft",
+    "level-mid",
+    "level-high"
+  );
+  if (!characterId) {
+    return;
+  }
+  scene.classList.add(`character-scene--${characterId}`);
+  scene.classList.add(level >= 5 ? "level-high" : level >= 2 ? "level-mid" : "level-soft");
+}
+
+function getCharacterAuraText(characterId, level) {
+  const auraMap = {
+    tree: [
+      "A tiny sprout still believes in sunlight.",
+      "Leaves are learning how to hold light.",
+      "Blossoms mean your patience is working.",
+      "Fruit appears when steady days stack up.",
+      "Your tree now feels safe, strong, and warm.",
+      "The forest spirit in it is starting to glow.",
+      "It looks like home now.",
+    ],
+    turtle: [
+      "Slow is fine when the direction is clear.",
+      "Its shell shines a little more today.",
+      "Calm steps are becoming real power.",
+      "Your turtle is learning brave consistency.",
+      "It now carries quiet confidence.",
+      "Ancient steady energy is waking up.",
+      "Nothing rushes it, and nothing stops it.",
+    ],
+    cat: [
+      "A sleepy kitten is waiting for affection.",
+      "The little paws are getting lighter and quicker.",
+      "Its whiskers already look brighter.",
+      "This cat now carries a soft heroic spark.",
+      "It has learned how to guard your rhythm.",
+      "A tiny star-cat is almost here.",
+      "It shines like it knows your effort by heart.",
+    ],
+  };
+  return auraMap[characterId]?.[Math.min(level, 6)] || "Your companion is growing with every good day.";
+}
+
+function getCharacterSvg(characterId, level, scale) {
+  if (characterId === "tree") {
+    return getTreeSvg(level, scale);
+  }
+  if (characterId === "turtle") {
+    return getTurtleSvg(level, scale);
+  }
+  return getCatSvg(level, scale);
+}
+
+function getTreeSvg(level, scale) {
+  const blossoms = level >= 2 ? `
+    <g class="blossom">
+      <circle cx="106" cy="112" r="10" fill="#FFE4F0"/>
+      <circle cx="196" cy="106" r="11" fill="#FFF4C7"/>
+      <circle cx="132" cy="84" r="8" fill="#FFE4F0"/>
+    </g>` : "";
+  const fruits = level >= 3 ? `
+    <g class="fruit">
+      <circle cx="118" cy="128" r="8" fill="#FF7CBC"/>
+      <circle cx="190" cy="132" r="8" fill="#FFD56A"/>
+      <circle cx="160" cy="92" r="7" fill="#73B8FF"/>
+    </g>` : "";
+  const sparkles = level >= 4 ? `
+    <g class="sparkle glow-stars">
+      <circle cx="78" cy="74" r="6" fill="#FFF7A0"/>
+      <circle cx="224" cy="86" r="5" fill="#FFFFFF"/>
+      <circle cx="206" cy="56" r="4" fill="#FFF7A0"/>
+    </g>` : "";
+  return `
+    <svg class="character-svg" viewBox="0 0 300 300" role="img" aria-label="大树角色">
+      <defs>
+        <filter id="treeGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="10" result="blur"/>
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.38 0 1 0 0 0.78 0 0 1 0 0.58 0 0 0 0.85 0"/>
+        </filter>
+      </defs>
+      <g transform="translate(0 8) scale(${scale}) translate(${(1 - scale) * 150} ${(1 - scale) * 150})">
+        <ellipse class="glow-core" cx="150" cy="146" rx="72" ry="66" fill="#87F4B6" opacity="${level >= 5 ? 0.42 : level >= 3 ? 0.26 : 0.14}" filter="url(#treeGlow)" />
+        <ellipse cx="150" cy="248" rx="82" ry="20" fill="rgba(93, 188, 136, 0.18)" />
+        <path d="M136 144C112 148 98 166 98 186C98 212 118 228 148 228H152C182 228 202 212 202 186C202 166 188 148 164 144H136Z" fill="#4FAE79"/>
+        <path d="M150 60C116 60 88 80 76 112C64 116 54 130 54 148C54 178 78 202 108 202H194C228 202 250 178 250 144C250 116 230 92 202 86C190 68 172 60 150 60Z" fill="#74DDA2"/>
+        <path d="M150 84C124 84 102 98 94 118C82 122 74 134 74 148C74 172 92 188 114 188H188C214 188 232 172 232 150C232 128 216 112 196 108C188 94 170 84 150 84Z" fill="#8EE6B5"/>
+        <rect x="136" y="154" width="28" height="82" rx="14" fill="#8D5B49"/>
+        <ellipse class="head" cx="150" cy="168" rx="34" ry="28" fill="rgba(255,255,255,0.18)"/>
+        ${blossoms}
+        ${fruits}
+        ${sparkles}
+        <circle cx="138" cy="166" r="8.5" fill="#fff"/>
+        <circle cx="162" cy="166" r="8.5" fill="#fff"/>
+        <circle cx="138" cy="166" r="3.2" fill="#3F355A"/>
+        <circle cx="162" cy="166" r="3.2" fill="#3F355A"/>
+        <circle cx="126" cy="180" r="6" fill="rgba(255,181,193,0.62)"/>
+        <circle cx="174" cy="180" r="6" fill="rgba(255,181,193,0.62)"/>
+        <path d="M142 186C146 192 154 192 158 186" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    </svg>
+  `;
+}
+
+function getTurtleSvg(level, scale) {
+  const starMarks = level >= 4 ? `<g class="sparkle glow-stars"><circle cx="232" cy="74" r="6" fill="#FFF7A0"/><circle cx="76" cy="92" r="5" fill="#FFFFFF"/><circle cx="204" cy="54" r="4" fill="#FFF7A0"/></g>` : "";
+  return `
+    <svg class="character-svg" viewBox="0 0 300 300" role="img" aria-label="乌龟角色">
+      <defs>
+        <filter id="turtleGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="9" result="blur"/>
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.45 0 1 0 0 0.78 0 0 1 0 0.92 0 0 0 0.9 0"/>
+        </filter>
+      </defs>
+      <g transform="translate(0 8) scale(${scale}) translate(${(1 - scale) * 150} ${(1 - scale) * 150})">
+        <ellipse class="glow-core" cx="150" cy="178" rx="76" ry="58" fill="#8BCEFF" opacity="${level >= 5 ? 0.42 : level >= 3 ? 0.28 : 0.14}" filter="url(#turtleGlow)" />
+        <ellipse cx="150" cy="248" rx="84" ry="20" fill="rgba(86, 189, 154, 0.16)" />
+        ${starMarks}
+        <ellipse cx="150" cy="186" rx="68" ry="54" fill="#5ED3A7"/>
+        <ellipse cx="150" cy="186" rx="52" ry="40" fill="#4D9F79"/>
+        <path class="shell-mark" d="M150 154L170 176L150 198L130 176L150 154Z" fill="#B8A7FF" opacity="${level >= 3 ? 0.9 : 0.45}"/>
+        <path class="shell-mark" d="M122 176L136 190L122 206L108 190L122 176Z" fill="#95D4FF" opacity="${level >= 2 ? 0.85 : 0.34}"/>
+        <path class="shell-mark" d="M178 176L192 190L178 206L164 190L178 176Z" fill="#95D4FF" opacity="${level >= 2 ? 0.85 : 0.34}"/>
+        <ellipse class="head" cx="226" cy="182" rx="30" ry="27" fill="#92E5B8"/>
+        <circle cx="218" cy="176" r="6.5" fill="#fff"/>
+        <circle cx="236" cy="176" r="6.5" fill="#fff"/>
+        <circle cx="218" cy="176" r="2.6" fill="#3F355A"/>
+        <circle cx="236" cy="176" r="2.6" fill="#3F355A"/>
+        <circle cx="212" cy="190" r="5" fill="rgba(255,181,193,0.62)"/>
+        <circle cx="244" cy="190" r="5" fill="rgba(255,181,193,0.62)"/>
+        <path d="M220 194C224 199 232 199 236 194" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="104" cy="224" rx="17" ry="10" fill="#92E5B8"/>
+        <ellipse cx="196" cy="224" rx="17" ry="10" fill="#92E5B8"/>
+        <ellipse cx="114" cy="144" rx="16" ry="10" fill="#92E5B8"/>
+        <ellipse cx="186" cy="144" rx="16" ry="10" fill="#92E5B8"/>
+      </g>
+    </svg>
+  `;
+}
+
+function getCatSvg(level, scale) {
+  const stars = level >= 3 ? `<g class="sparkle glow-stars"><circle cx="92" cy="78" r="5" fill="#FFF7A0"/><circle cx="228" cy="98" r="6" fill="#FFFFFF"/><circle cx="214" cy="56" r="4" fill="#FFF7A0"/></g>` : "";
+  const cape = level >= 5 ? `<path d="M112 188C140 206 176 206 204 188L196 228C180 240 124 240 120 228L112 188Z" fill="rgba(139,124,255,0.24)"/>` : "";
+  return `
+    <svg class="character-svg" viewBox="0 0 300 300" role="img" aria-label="小猫角色">
+      <defs>
+        <filter id="catGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="9" result="blur"/>
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.95 0 1 0 0 0.78 0 0 1 0 0.4 0 0 0 0.88 0"/>
+        </filter>
+      </defs>
+      <g transform="translate(0 8) scale(${scale}) translate(${(1 - scale) * 150} ${(1 - scale) * 150})">
+        <ellipse class="glow-core" cx="150" cy="168" rx="72" ry="60" fill="#FFD68A" opacity="${level >= 5 ? 0.42 : level >= 3 ? 0.28 : 0.16}" filter="url(#catGlow)" />
+        <ellipse cx="150" cy="248" rx="78" ry="20" fill="rgba(115, 184, 255, 0.16)" />
+        ${stars}
+        ${cape}
+        <path class="tail" d="M92 192C66 178 62 144 86 134C110 124 122 146 110 164" fill="none" stroke="#FFD56A" stroke-width="18" stroke-linecap="round"/>
+        <path d="M110 126L128 88L148 120" fill="#FFD56A"/>
+        <path d="M190 126L172 88L152 120" fill="#FFD56A"/>
+        <ellipse cx="150" cy="210" rx="54" ry="34" fill="#FFE59A"/>
+        <circle class="head" cx="150" cy="148" r="50" fill="#FFD56A"/>
+        <ellipse cx="150" cy="164" rx="24" ry="18" fill="rgba(255,255,255,0.2)"/>
+        <circle cx="132" cy="148" r="9.5" fill="#fff"/>
+        <circle cx="168" cy="148" r="9.5" fill="#fff"/>
+        <circle cx="132" cy="148" r="3.4" fill="#3F355A"/>
+        <circle cx="168" cy="148" r="3.4" fill="#3F355A"/>
+        <circle cx="120" cy="166" r="6.5" fill="rgba(255,181,193,0.62)"/>
+        <circle cx="180" cy="166" r="6.5" fill="rgba(255,181,193,0.62)"/>
+        <path d="M144 170L150 176L156 170" stroke="#F28C28" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M138 182C144 188 156 188 162 182" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+        <path class="whisker" d="M120 166L90 162" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        <path class="whisker" d="M120 176L92 182" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        <path class="whisker" d="M180 166L210 162" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        <path class="whisker" d="M180 176L208 182" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        ${level >= 2 ? `<g class="sparkle glow-stars"><circle cx="116" cy="118" r="6" fill="#FF7CBC"/><circle cx="184" cy="118" r="6" fill="#73B8FF"/></g>` : ""}
+      </g>
+    </svg>
+  `;
+}
+
+function computeLifetimeStats() {
+  const dateKeys = Object.keys(state.data.entries).sort();
+  let totalScore = 0;
+  let activeDays = 0;
+  dateKeys.forEach((dateKey) => {
+    const entry = getEntry(dateKey);
+    if (hasAnyActivity(entry)) {
+      activeDays += 1;
+    }
+    totalScore += calculateScore(entry);
+  });
+
+  return {
+    totalScore,
+    activeDays,
+    firstDate: dateKeys[0] || "",
+    rewardInventory: getRewardInventory(),
+    unlockedMilestones: LEVEL_THRESHOLDS.filter((threshold) => totalScore >= threshold).length,
+    claimedRewards: getAllClaimedRewards(),
+    lastLevelUpDate: state.data.lastLevelUpDate || "",
+  };
+}
+
+function getRewardInventory() {
+  const inventory = { climb: 0, feast: 0 };
+  Object.values(state.data.weeklyClaims).forEach((weekClaims) => {
+    if (weekClaims.climb) {
+      inventory.climb += 1;
+    }
+    if (weekClaims.feast) {
+      inventory.feast += 1;
+    }
+  });
+  return inventory;
+}
+
+function getAllClaimedRewards() {
+  return Object.entries(state.data.weeklyClaims).flatMap(([weekKey, rewards]) =>
+    Object.keys(rewards)
+      .filter((key) => rewards[key])
+      .map((rewardId) => `${weekKey}-${rewardId}`)
+  );
+}
+
+function getLevelInfo(totalScore) {
+  let level = 0;
+  LEVEL_THRESHOLDS.forEach((threshold, index) => {
+    if (totalScore >= threshold) {
+      level = index;
+    }
+  });
+  const nextThreshold = LEVEL_THRESHOLDS[level + 1] ?? null;
+  return { level, nextThreshold };
+}
+
+function getCurrentCharacter() {
+  return CHARACTER_LIBRARY.find((item) => item.id === state.data.characterId) || null;
+}
+
+function getStageForCharacter(character, level) {
+  if (!character) {
+    return { stage: "未绑定", title: "先选择角色" };
+  }
+  return character.milestones.find((item) => level <= item.maxLevel) || character.milestones[character.milestones.length - 1];
+}
+
+function updateRewardProgress(totalScore, targetScore, barElement, textElement) {
+  const percent = Math.max(0, Math.min(100, (totalScore / targetScore) * 100));
+  barElement.style.width = `${percent}%`;
+  textElement.textContent = totalScore >= targetScore ? "已达标" : `还差 ${targetScore - totalScore}`;
+}
+
+function getHistorySummaries() {
+  const weekStarts = new Set();
+  Object.keys(state.data.entries).forEach((dateKey) => {
+    weekStarts.add(getWeekStart(dateKey));
+  });
+
+  return Array.from(weekStarts)
+    .sort((a, b) => (a < b ? 1 : -1))
+    .map((weekStart) => {
+      const weekInfo = getWeekInfo(weekStart);
+      const weekScore = getWeekScore(weekInfo.weekDates);
+      const activeEntries = weekInfo.weekDates
+        .map((dateKey) => ({ dateKey, entry: getEntry(dateKey) }))
+        .filter(({ entry }) => hasAnyActivity(entry));
+      const claims = state.data.weeklyClaims[weekStart] || {};
+      const claimNames = [];
+      if (claims.climb) {
+        claimNames.push("攀岩");
+      }
+      if (claims.feast) {
+        claimNames.push("豪华餐");
+      }
+
+      return {
+        startLabel: formatDateLabel(weekInfo.start),
+        endLabel: formatDateLabel(weekInfo.end),
+        weekScore,
+        rewardText: getRewardText(weekScore),
+        claimText: claimNames.length ? claimNames.join("、") : "未领取",
+        highlight: getWeeklyHighlight(activeEntries),
+      };
+    });
+}
+
+function getWeeklyHighlight(activeEntries) {
+  if (!activeEntries.length) {
+    return "这一周还没有有效打卡";
+  }
+  const topDay = activeEntries.reduce((best, current) => {
+    const currentScore = calculateScore(current.entry);
+    const bestScore = calculateScore(best.entry);
+    return currentScore > bestScore ? current : best;
+  });
+  return `最高分日是 ${getWeekdayLabel(topDay.dateKey)}，拿到 ${calculateScore(topDay.entry)} 分`;
+}
+
+function getRewardText(totalScore) {
+  if (totalScore >= 420) {
+    return "本周双奖励都达成";
+  }
+  if (totalScore >= 360) {
+    return "本周攀岩奖励达成";
+  }
+  return "本周仍可继续冲线";
+}
+
+function getWeekdayNote(dateKey, entry, score) {
+  if (score === 0) {
+    return isSunday(dateKey) ? "奖励 / 还债日" : "等待打卡";
+  }
+  if (entry.note) {
+    return entry.note.slice(0, 12);
+  }
+  if (isSunday(dateKey)) {
+    return "周日补分成功";
+  }
+  return "继续保持";
+}
+
+function getWeekScore(weekDates) {
+  return weekDates.reduce((sum, dateKey) => sum + calculateScore(getEntry(dateKey)), 0);
+}
+
+function calculateScore(entry) {
+  return (
+    (entry.swim ? 20 : 0) +
+    (entry.workout ? 20 : 0) +
+    (entry.sleepBeforeMidnight ? 20 : 0) +
+    (entry.happyMood ? 10 : 0) +
+    entry.jobHours * 10
+  );
+}
+
+function readEntryFromEditor() {
+  return normalizeEntry({
+    swim: elements.swimCheck.checked,
+    workout: elements.workoutCheck.checked,
+    sleepBeforeMidnight: elements.sleepCheck.checked,
+    happyMood: elements.moodCheck.checked,
+    jobHours: toSafeHours(elements.jobHours.value),
+    note: elements.dailyNote.value.trim(),
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+function getEntry(dateKey) {
+  return normalizeEntry(state.data.entries[dateKey] || {});
+}
+
+function normalizeEntry(entry) {
+  return {
+    swim: Boolean(entry.swim),
+    workout: Boolean(entry.workout),
+    sleepBeforeMidnight: Boolean(entry.sleepBeforeMidnight),
+    happyMood: Boolean(entry.happyMood),
+    jobHours: roundHours(Math.max(0, Number(entry.jobHours) || 0)),
+    note: typeof entry.note === "string" ? entry.note : "",
+    updatedAt: entry.updatedAt || "",
+  };
+}
+
+function hasAnyActivity(entry) {
+  return (
+    entry.swim ||
+    entry.workout ||
+    entry.sleepBeforeMidnight ||
+    entry.happyMood ||
+    entry.jobHours > 0 ||
+    Boolean(entry.note)
+  );
+}
+
+function loadData() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return createEmptyData();
+    }
+    const parsed = JSON.parse(raw);
+    return normalizeData(parsed);
+  } catch (error) {
+    return createEmptyData();
+  }
+}
+
+function createEmptyData() {
+  return {
+    entries: {},
+    weeklyClaims: {},
+    characterId: "",
+    lastLevelUpDate: "",
+  };
+}
+
+function normalizeData(parsed) {
+  return {
+    entries: parsed.entries && typeof parsed.entries === "object" ? parsed.entries : {},
+    weeklyClaims: parsed.weeklyClaims && typeof parsed.weeklyClaims === "object" ? parsed.weeklyClaims : {},
+    characterId: typeof parsed.characterId === "string" ? parsed.characterId : "",
+    lastLevelUpDate: typeof parsed.lastLevelUpDate === "string" ? parsed.lastLevelUpDate : "",
+  };
+}
+
+function saveData() {
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+}
+
+function exportData() {
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    data: state.data,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `自律冲刺站完整版数据-${getTodayKey()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result || "{}"));
+      const imported = parsed.data || parsed;
+      state.data = normalizeData(imported);
+      saveData();
+      renderAll();
+      window.alert("导入成功，养成进度已经恢复。");
+    } catch (error) {
+      window.alert("导入失败，请检查 JSON 文件格式。");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function getWeekInfo(dateKey) {
+  const start = getWeekStart(dateKey);
+  const weekDates = Array.from({ length: 7 }, (_, index) => addDays(start, index));
+  return {
+    start,
+    end: weekDates[6],
+    weekDates,
+  };
+}
+
+function getWeekStart(dateKey) {
+  const date = parseDateKey(dateKey);
+  const jsDay = date.getDay();
+  const offset = jsDay === 0 ? -6 : 1 - jsDay;
+  date.setDate(date.getDate() + offset);
+  return formatDateKey(date);
+}
+
+function isSunday(dateKey) {
+  return parseDateKey(dateKey).getDay() === 0;
+}
+
+function getWeekdayLabel(dateKey) {
+  const day = parseDateKey(dateKey).getDay();
+  return WEEKDAY_NAMES[day === 0 ? 6 : day - 1];
+}
+
+function formatDateLabel(dateKey) {
+  const [year, month, day] = dateKey.split("-");
+  return `${year}.${month}.${day}`;
+}
+
+function addDays(dateKey, amount) {
+  const date = parseDateKey(dateKey);
+  date.setDate(date.getDate() + amount);
+  return formatDateKey(date);
+}
+
+function parseDateKey(dateKey) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getTodayKey() {
+  return formatDateKey(new Date());
+}
+
+function toSafeHours(value) {
+  return roundHours(Math.max(0, Number(value) || 0));
+}
+
+function roundHours(value) {
+  return Math.round(value * 2) / 2;
+}
+
+function pickRandom(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function getDayIndex() {
+  const today = new Date();
+  const startOfYear = new Date(today.getFullYear(), 0, 0);
+  const diff = today - startOfYear;
+  return Math.floor(diff / 86400000);
+}
+
+function getCurrentDailyQuote() {
+  const index = getDayIndex();
+  return DAILY_QUOTES[index % DAILY_QUOTES.length];
+}
+
+function isIosSafari() {
+  const ua = window.navigator.userAgent;
+  const isIos = /iPad|iPhone|iPod/.test(ua);
+  const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  return isIos && isSafari;
+}
+
+</script>
+  </body>
+  </html>
